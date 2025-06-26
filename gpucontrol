@@ -13,6 +13,11 @@ CONFIG_FILE="$INSTALL_DIR/config.sh"
 GPU_MAX_FREQ=
 ORIGINAL_GPU_MAX_FREQ=
 
+if ! ( [[ -z "$1" ]] || [[ "$1" == "--h" || "$1" == "-h" || "$1" == "h" || "$1" == "--help" || "$1" == "-help" || "$1" == "help" || "$1" == "status" ]] ) && [[ "$(id -u)" -ne 0 ]]; then    echo "${RED}GPUControl requires sudo to run.${RESET}"
+    echo "  Try: sudo gpucontrol $*  or  sudo $0 $*"
+    exit 1
+fi
+
 load_config() {
     if [ -f "$CONFIG_FILE" ]; then
         source "$CONFIG_FILE"
@@ -135,7 +140,7 @@ echo "╔═══════════════════════�
 echo "║                                                                                                                  ║"
 echo "║                                         GPUControl commands with examples:                                       ║"
 echo "║                                                                                                                  ║"
-echo "║  sudo gpucontrol                # Show current GPU info and frequency                                            ║"
+echo "║  gpucontrol                     # Show current GPU info and frequency                                            ║"
 echo "║  sudo gpucontrol restore        # Restore GPU max frequency to original value                                    ║"
 echo "║  sudo gpucontrol intel 700      # Set Intel GPU max frequency to 700 MHz                                         ║"
 echo "║  sudo gpucontrol amd 800        # Set AMD GPU max frequency to 800 MHz - rounds down to pp_od_clk_voltage index  ║"

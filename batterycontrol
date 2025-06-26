@@ -15,6 +15,14 @@ RUN_FLAG="$INSTALL_DIR/.batterycontrol_enabled"
 PID_FILE="$INSTALL_DIR/.batterycontrol_pid"
 LOG_FILE="/var/log/batterycontrol.log"
 
+
+if ! ( [[ -z "$1" ]] || [[ "$1" == "--h" || "$1" == "-h" || "$1" == "h" || "$1" == "--help" || "$1" == "-help" || "$1" == "help" || "$1" == "status" ]] ) && [[ "$(id -u)" -ne 0 ]]; then    echo "${RED}BatteryControl requires sudo to run.${RESET}"
+    echo "  Try: sudo batterycontrol $*  or  sudo $0 $*"
+    exit 1
+fi
+
+
+
 DEFAULT_CHARGE_MAX=77
 
 CHARGE_MAX=
@@ -67,7 +75,7 @@ echo "╔═══════════════════════�
 echo "║                                                                                    ║"
 echo "║                       BatteryControl commands with examples:                       ║"
 echo "║                                                                                    ║"
-echo "║  sudo batterycontrol          # Check BatteryControl status                        ║"
+echo "║  batterycontrol               # Check BatteryControl status                        ║"
 echo "║  sudo batterycontrol start    # Start BatteryControl                               ║"
 echo "║  sudo batterycontrol stop     # Stop BatteryControl                                ║"
 echo "║  sudo batterycontrol 77       # Charge limit set to 77% - Minimum allowed is 14%   ║"
@@ -130,9 +138,9 @@ sudo ectool usbpdpower 2>/dev/null || echo "Failed to run ectool usbpdpower (is 
 echo
 sudo ectool battery 2>/dev/null || echo "Failed to run ectool battery (is ectool installed and available?)"
 echo "═════════════════════════════════════════════════════════════════════════════"
-echo "${RESET}"
+echo ""
         else
-echo "Active USB-PD Charger Port: None detected ${RESET}"
+echo "Active USB-PD Charger Port: None detected "
 sudo ectool usbpdpower 2>/dev/null || echo "Failed to run ectool usbpdpower (is ectool installed and available?)"
 echo
 sudo ectool battery 2>/dev/null || echo "Failed to run ectool battery (is ectool installed and available?)"

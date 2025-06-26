@@ -20,6 +20,13 @@ IS_AMD=0
 IS_INTEL=0
 IS_ARM=0
 
+if ! ( [[ -z "$1" ]] || [[ "$1" == "--h" || "$1" == "-h" || "$1" == "h" || "$1" == "--help" || "$1" == "-help" || "$1" == "help" || "$1" == "status" ]] ) && [[ "$(id -u)" -ne 0 ]]; then
+    echo "${RED}PowerControl requires sudo to run.${RESET}"
+    echo "  Try: sudo powercontrol $*  or  sudo $0 $*"
+    exit 1
+fi
+
+
 detect_cpu_type() {
     case "$CPU_VENDOR" in
         GenuineIntel)
@@ -517,7 +524,7 @@ echo "╔═══════════════════════�
 echo "║                                                                                                           ║"
 echo "║                                    PowerControl commands with examples:                                   ║"
 echo "║                                                                                                           ║"
-echo "║  sudo powercontrol                     # Show status                                                      ║"
+echo "║  powercontrol                          # Show status                                                      ║"
 echo "║  sudo powercontrol start               # Throttle CPU based on temperature curve                          ║"
 echo "║  sudo powercontrol stop                # Restore default CPU settings                                     ║"
 echo "║  sudo powercontrol no_turbo 1          # 0 = Enable, 1 = Disable Turbo Boost                              ║"
@@ -757,7 +764,7 @@ case "$1" in
     ;;
     reinstall)
     echo "Downloading to:${CYAN} /home/chronos/ChromeOS_PowerControl_Installer.sh $RESET"
-    curl -L https://raw.githubusercontent.com/shadowed1/ChromeOS_PowerControl/main/ChromeOS_PowerControl_Installer.sh -o /home/chronos/ChromeOS_PowerControl_Installer.sh
+    bash <(curl -s "https://raw.githubusercontent.com/shadowed1/ChromeOS_PowerControl/main/ChromeOS_PowerControl_Downloader.sh?$(date +%s)")
     echo "Running commands:"
     echo ""
     sudo mkdir -p /usr/local/bin
@@ -770,9 +777,6 @@ case "$1" in
     __monitor__)
         LOG_FILE="/var/log/powercontrol.log"
         start_monitoring_loop
-        ;;
-    *)
-        show_status
         ;;
     *) echo "Unknown command: $1"; show_help ;;
 esac
